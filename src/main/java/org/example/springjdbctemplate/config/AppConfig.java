@@ -33,7 +33,7 @@ public class AppConfig {
     }
 
     @Bean
-    public UserRepository userRepository(JdbcTemplate jdbcTemplate, PlatformTransactionManager transactionManager) {
+    public UserRepository userRepository(JdbcTemplate jdbcTemplate, TransactionTemplate transactionManager) {
         return new UserRepository(jdbcTemplate, transactionManager);
     }
 }
