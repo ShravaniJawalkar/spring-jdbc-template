@@ -4,7 +4,12 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.example.springjdbctemplate.dao.User;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 public class UserRepository {
@@ -54,6 +59,31 @@ public class UserRepository {
             return user;
         }, id).stream().findFirst().orElse(null);
     }
+
+    public User getUserByName(String name) {
+        String sql = "SELECT * FROM users WHERE name = ?";
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+            User user = new User();
+            user.setUsername(rs.getString("name"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            return user;
+        }, name);
+    }
+
+    public List<User> getAllUser(String name) {
+        String sql = "SELECT * FROM users";
+
+        return new ArrayList<User>(Collections.singleton(jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+            User user = new User();
+            user.setUsername(rs.getString("name"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            return user;
+        })));
+
+    }
+
 
     // Example: programmatic transaction for creating and updating a user
     public void createAndUpdateUser(User user, String newEmail) {
